@@ -1,0 +1,104 @@
+## Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.log
+*.tlog
+*.idb
+*.pdb
+*.ipch
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
+# MSBuild Binary and Intermediate files
+*.ilk
+*.iobj
+*.ipdb
+*.rsp
+*.pch
+
+# C++ Precompiled Headers
+*.gch
+
+# DLL exports / imports
+*.exp
+*.lib
+
+# C++ compiler-generated
+*.exe
+*.dll
+
+# Others
+*.dbmdl
+*.dbproj.schemaview
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+*.psmdcp
+*.symbols.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# dotnet CLI
+*.deps.json
+*.runtimeconfig.json
+
+# Rider / ReSharper
+.idea/
+*.DotSettings.user
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# User-specific files
+*.ntvs_analysis.dat
+*.vspscc
+*.vssscc
+
+# Local test results
+TestResults/
+*.coverage
+*.coveragexml
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# DocFX
+_site/
+*.docfx
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# StyleCop
+StyleCopReport.xml
+
+# WebAssembly / Blazor (if applicable)
+wwwroot/dist/

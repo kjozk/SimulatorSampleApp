@@ -1,0 +1,1 @@
+C:\Users\kjozk\OneDrive\Repositories\SimulatorSampleApp\SimulatorSampleApp.NativeBridge\x64\Debug\SimulatorSampleApp.NativeBridge.vcxproj.AssemblyReference.cache

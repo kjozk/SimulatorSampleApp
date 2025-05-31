@@ -1,0 +1,16 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly SimulatorSampleApp.NativeBridge, Version=1.0.*, Culture=ロケールに依存しない言語 (ロケールに依存しない国): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class SimulatorSampleApp.NativeBridge.CalculationResultItem: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(System.String, Double): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    System.String Kind : Public
+    Double Value : Public
+Class SimulatorSampleApp.NativeBridge.NativeInterface: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    CalculatePlane(Double, Double, Double, Double, Int32, Int32): PrivateScope, Public, Static, HideBySig
