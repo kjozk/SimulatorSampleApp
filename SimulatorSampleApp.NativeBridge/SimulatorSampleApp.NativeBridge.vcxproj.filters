@@ -14,14 +14,16 @@
       <Filter>PCH</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="NativeInterface.h" />
+    <ClInclude Include="CalculationResultItem.h" />
+    <ClInclude Include="Calculation.h" />
+    <ClInclude Include="CalculationEnums.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="NativeInterface.cpp" />
+    <ClCompile Include="Calculation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

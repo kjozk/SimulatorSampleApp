@@ -5,12 +5,18 @@
 #include "../include/NativeSimulatorAPI.h"
 #include <vector>
 
-std::vector<ResultItem> NativeCore::CalculatePlane(
-    double originX, double originY, double width, double depth, int countX, int countY)
+namespace SimulatorSampleApp
 {
-    std::vector<ResultItem> results;
-    results.push_back({ "Average", 100.0 });
-    results.push_back({ "Max", 150.0 });
-    results.push_back({ "Min", 80.0 });
-    return results;
+    namespace NativeCore
+    {
+        std::vector<CalculationResultItem> Calculation::CalculatePlane(
+            double originX, double originY, double width, double depth, int countX, int countY)
+        {
+            std::vector<CalculationResultItem> results;
+            results.push_back({ CalculationResultKind::Average, 100.0, CalculationUnitKind::None });
+            results.push_back({ CalculationResultKind::Maximum, 150.0, CalculationUnitKind::None });
+            results.push_back({ CalculationResultKind::Minimum, 80.0, CalculationUnitKind::None });
+            return results;
+        }
+    }
 }
