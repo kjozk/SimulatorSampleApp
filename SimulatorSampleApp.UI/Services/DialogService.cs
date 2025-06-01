@@ -1,8 +1,10 @@
-﻿using SimulatorSampleApp.UI.Interface;
+﻿using SimulatorSampleApp.MVVM.Services;
+using SimulatorSampleApp.UI.Interface;
+using System.Windows;
 
 namespace SimulatorSampleApp.UI.Services
 {
-    public class WpfFileNameService : IFileNameService
+    public class DialogService : IFileNameService, IMessageBoxService
     {
         public bool TryGetOpenFileName(string filter, string defaultExt, out string filePath)
         {
@@ -45,6 +47,18 @@ namespace SimulatorSampleApp.UI.Services
                 filePath = null; // 失敗したら null をセット
                 return false;
             }
+        }
+
+        // IMessageBoxService の実装
+        public void ShowMessage(string message, string title)
+        {
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public bool ShowConfirmation(string message, string title)
+        {
+            MessageBoxResult result = MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            return result == MessageBoxResult.OK;
         }
     }
 }

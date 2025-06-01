@@ -3,6 +3,7 @@ using SimulatorSampleApp.Engine.IO;
 using SimulatorSampleApp.Model.Calculation;
 using SimulatorSampleApp.Model.Common;
 using SimulatorSampleApp.MVVM;
+using SimulatorSampleApp.MVVM.Services;
 using SimulatorSampleApp.UI.Interface;
 using System;
 using System.Collections.ObjectModel;
@@ -21,7 +22,12 @@ namespace SimulatorSampleApp.UI.ViewModels
         /// <summary>
         /// 保存するファイル名を取得するためのサービス
         /// </summary>
-        private readonly IFileNameService _fileService;
+        private readonly IFileNameService _fileNameService;
+
+        /// <summary>
+        /// メッセージボックスを表示するためのサービス
+        /// </summary>
+        private readonly IMessageBoxService _messageBoxService;
 
         /// <summary>
         /// 計算データを永続化するためのサービス
@@ -92,10 +98,12 @@ namespace SimulatorSampleApp.UI.ViewModels
         /// <param name="fileService"></param>
         /// <param name="persistenceService"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public MainViewModel(IFileNameService fileService, IPersistenceService<CalculationData> persistenceService)
+        public MainViewModel(IFileNameService fileNameService, IMessageBoxService messageBoxService, IPersistenceService<CalculationData> persistenceService)
         {
-            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+            _fileNameService = fileNameService ?? throw new ArgumentNullException(nameof(fileNameService));
+            _messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
             _persistenceService = persistenceService ?? throw new ArgumentNullException(nameof(persistenceService));
+
             SelectedShape = "Plane"; // 初期選択
             CalculateCommand = new DelegateCommand(Calculate);
             SaveAsCommand = new AsyncCommand(SaveAsAsync);
@@ -158,7 +166,7 @@ namespace SimulatorSampleApp.UI.ViewModels
         {
             try
             {
-                if (!_fileService.TryGetSaveFileName(
+                if (!_fileNameService.TryGetSaveFileName(
                     "XMLファイル (*.xml)|*.xml|JSONファイル (*.json)|*.json|全てのファイル (*.*)|*.*",
                     ".xml",
                     "calculationData.xml", 
@@ -175,7 +183,9 @@ namespace SimulatorSampleApp.UI.ViewModels
                 };
 
                 await _persistenceService.SaveDataAsync(filePath, data, token);
-                
+
+                _messageBoxService.ShowMessage($"{filePath} にデータが保存されました。", "保存");
+
                 Console.WriteLine($"{filePath} にデータがシリアル化されました。");
             }
             catch (Exception ex)

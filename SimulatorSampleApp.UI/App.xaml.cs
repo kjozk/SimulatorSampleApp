@@ -1,6 +1,11 @@
-﻿using SimulatorSampleApp.UI.Services;
-using SimulatorSampleApp.UI.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SimulatorSampleApp.Engine.IO;
+using SimulatorSampleApp.Model.Calculation;
+using SimulatorSampleApp.MVVM.Services;
+using SimulatorSampleApp.UI.Interface;
+using SimulatorSampleApp.UI.Services;
+using SimulatorSampleApp.UI.ViewModels;
+using System;
 using System.Windows;
 
 namespace SimulatorSampleApp.UI
@@ -14,13 +19,17 @@ namespace SimulatorSampleApp.UI
         {
             base.OnStartup(e);
 
-            var fileService = new WpfFileNameService();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IFileNameService, DialogService>();
+            serviceCollection.AddSingleton<IMessageBoxService, DialogService>();
+            serviceCollection.AddSingleton<IPersistenceService<CalculationData>, CalculationDataPersistenceService>();
 
-            var calculationDataPersistenceService = new CalculationDataPersistenceService();
+            serviceCollection.AddTransient<MainViewModel>();
 
+            ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
             var mainWindow = new MainWindow
             {
-                DataContext = new MainViewModel(fileService, calculationDataPersistenceService)
+                DataContext = serviceProvider.GetService<MainViewModel>()
             };
             mainWindow.Show();
         }

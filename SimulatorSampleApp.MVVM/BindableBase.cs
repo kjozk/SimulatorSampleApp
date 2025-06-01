@@ -12,7 +12,7 @@ namespace SimulatorSampleApp.MVVM
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         /// <summary>
-        /// 
+        /// プロパティの値を設定し、変更があった場合にPropertyChangedイベントを発火します。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="storage"></param>
