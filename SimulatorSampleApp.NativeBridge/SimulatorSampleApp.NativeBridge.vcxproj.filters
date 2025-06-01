@@ -8,27 +8,20 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{d5ce41ba-5c82-4c34-93de-32ed72d6fc13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="API">
-      <UniqueIdentifier>{7dcb599c-2c07-4c9b-8fa5-da21d2fd5382}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="NativeInterface.h">
-      <Filter>API</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="NativeInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="NativeInterface.cpp">
-      <Filter>API</Filter>
-    </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="NativeInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

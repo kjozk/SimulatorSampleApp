@@ -18,9 +18,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulatorSampleApp.NativeBr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulatorSampleApp.NativeCore", "SimulatorSampleApp.NativeCore\SimulatorSampleApp.NativeCore.vcxproj", "{C7F59AC8-67B8-48FC-BACD-EE2454F4EF89}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NativeLib", "NativeLib", "{DDB4EF12-CC4E-5E88-E6FC-71A802F4DE97}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{DDB4EF12-CC4E-5E88-E6FC-71A802F4DE97}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ManagedLib", "ManagedLib", "{448C2833-4082-4738-AE4F-7924CF4DAF68}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{448C2833-4082-4738-AE4F-7924CF4DAF68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulatorSampleApp.MVVM", "SimulatorSampleApp.MVVM\SimulatorSampleApp.MVVM.csproj", "{2AB0DB86-361B-465F-B4C2-0A023D9D6623}"
 EndProject

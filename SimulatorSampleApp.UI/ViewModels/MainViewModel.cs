@@ -1,27 +1,47 @@
-﻿using SimulatorSampleApp.Engine;
-using SimulatorSampleApp.Model;
+﻿using SimulatorSampleApp.Engine.Calculation;
+using SimulatorSampleApp.Engine.IO;
+using SimulatorSampleApp.Model.Calculation;
+using SimulatorSampleApp.Model.Common;
 using SimulatorSampleApp.MVVM;
+using SimulatorSampleApp.UI.Interface;
+using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SimulatorSampleApp.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        #region Fields
+
+        /// <summary>
+        /// 保存するファイル名を取得するためのサービス
+        /// </summary>
+        private readonly IFileNameService _fileService;
+
+        /// <summary>
+        /// 計算データを永続化するためのサービス
+        /// </summary>
+        private readonly IPersistenceService<CalculationData> _persistenceService;
+
+        #endregion
+
         #region Properties
 
-        private string _title = "Simulator";
-
-        public string Title
-        {
-            get => _title;
-            set => SetProperty(ref _title, value);
-        }
-
+        /// <summary>
+        /// 形状の選択肢を提供するコレクション
+        /// </summary>
         public ObservableCollection<string> ShapeTypes { get; } = new ObservableCollection<string>() { "Plane", "Sphere" };
 
         private string _selectedShape;
+
+        /// <summary>
+        /// 現在選択されている形状
+        /// </summary>
         public string SelectedShape
         {
             get => _selectedShape;
@@ -34,40 +54,75 @@ namespace SimulatorSampleApp.UI.ViewModels
             }
         }
 
-        private object _conditionViewModel;
-        public object ConditionViewModel
+        private ConditionViewModelWrapper _conditionViewModel;
+
+        /// <summary>
+        /// 計算条件のビューモデル
+        /// </summary>
+        public ConditionViewModelWrapper ConditionViewModel
         {
             get => _conditionViewModel;
             set => SetProperty(ref _conditionViewModel, value);
         }
 
+        /// <summary>
+        /// 計算結果のコレクション
+        /// </summary>
         public ObservableCollection<CalculationResultItem> Results { get; } = new ObservableCollection<CalculationResultItem>();
 
         #endregion
 
         #region Commands
 
+        /// <summary>
+        /// 計算を実行するコマンド
+        /// </summary>
         public ICommand CalculateCommand { get; }
+
+        /// <summary>
+        /// 保存を行うコマンド
+        /// </summary>
+        public ICommand SaveAsCommand { get; }
 
         #endregion
 
-        public MainViewModel()
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="fileService"></param>
+        /// <param name="persistenceService"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public MainViewModel(IFileNameService fileService, IPersistenceService<CalculationData> persistenceService)
         {
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+            _persistenceService = persistenceService ?? throw new ArgumentNullException(nameof(persistenceService));
             SelectedShape = "Plane"; // 初期選択
             CalculateCommand = new DelegateCommand(Calculate);
+            SaveAsCommand = new AsyncCommand(SaveAsAsync);
             UpdateConditionViewModel();
         }
-
 
         private void UpdateConditionViewModel()
         {
             switch (SelectedShape)
             {
                 case "Plane":
-                    ConditionViewModel = new PlaneConditionViewModel(new PlaneCalculationCondition(new Point3D(0,0,0), 10, 10, 0, 0));
+                    ConditionViewModel = new PlaneConditionViewModel(
+                        new PlaneCalculationCondition()
+                        {
+                            Shape = new PlaneCalculationShape()
+                            {
+                                CountX = 10,
+                                CountY = 10,
+                                Width = 100,
+                                Depth = 100,
+                                Origin = new Point3D(0, 0)
+                            }
+                        }
+                    );
                     break;
                 case "Sphere":
-                    ConditionViewModel = new SphereConditionViewModel();
+                    ConditionViewModel = new SphereConditionViewModel(new SphereCalculationCondition());
                     break;
             }
         }
@@ -76,16 +131,57 @@ namespace SimulatorSampleApp.UI.ViewModels
         {
             Results.Clear();
 
-            if (ConditionViewModel is PlaneConditionViewModel plane)
+            try
             {
-                var engine = new SimulationEngine(plane.Model);
+                var calculation = CalculationFactory.Create(ConditionViewModel.Model);
 
-                engine.Run(CancellationToken.None);
+                calculation.Execute(CancellationToken.None);
 
-                foreach (var item in engine.Results)
+                foreach (var item in calculation.Results)
                 {
                     Results.Add(item);
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // キャンセルされた場合の処理（必要に応じて）
+                Debug.WriteLine("計算がキャンセルされました。");
+            }
+            catch (Exception ex)
+            {
+                // エラーハンドリング（ログ出力やユーザー通知など）
+                Debug.WriteLine($"Error during calculation: {ex.Message}");
+            }
+        }
+
+        private async Task SaveAsAsync(CancellationToken token)
+        {
+            try
+            {
+                if (!_fileService.TryGetSaveFileName(
+                    "XMLファイル (*.xml)|*.xml|JSONファイル (*.json)|*.json|全てのファイル (*.*)|*.*",
+                    ".xml",
+                    "calculationData.xml", 
+                    out string filePath))
+                {
+                    Debug.WriteLine("ファイル保存がキャンセルされました。");
+                    return; // ユーザーがキャンセルした場合
+                }
+
+                var data = new CalculationData
+                {
+                    Condition = ConditionViewModel.Model,
+                    Results = Results.ToList()
+                };
+
+                await _persistenceService.SaveDataAsync(filePath, data, token);
+                
+                Console.WriteLine($"{filePath} にデータがシリアル化されました。");
+            }
+            catch (Exception ex)
+            {
+                // エラーハンドリング（ログ出力やユーザー通知など）
+                Debug.WriteLine($"Error during save: {ex.Message}");
             }
         }
     }

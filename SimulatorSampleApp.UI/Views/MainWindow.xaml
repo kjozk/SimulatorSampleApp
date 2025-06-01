@@ -7,7 +7,7 @@
         xmlns:viewModels="clr-namespace:SimulatorSampleApp.UI.ViewModels"
         xmlns:views="clr-namespace:SimulatorSampleApp.UI.Views"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="450" Width="800">
+        Title="シミュレータ" Height="450" Width="450">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:PlaneConditionViewModel}">
             <views:PlaneConditionView />
@@ -17,25 +17,38 @@
         </DataTemplate>
     </Window.Resources>
 
-    <StackPanel Margin="20">
+    <ScrollViewer>
+        <StackPanel Margin="20">
 
-        <TextBlock Text="計算条件" />
-        <ComboBox ItemsSource="{Binding ShapeTypes}"
-                SelectedItem="{Binding SelectedShape}" Width="200" />
+            <GroupBox Header="計算条件">
 
-        <ContentControl Content="{Binding ConditionViewModel}" Margin="0,10"/>
+                <StackPanel>
+                    <ComboBox ItemsSource="{Binding ShapeTypes}"
+                    SelectedItem="{Binding SelectedShape}" Width="200" />
 
-        <Button Content="計算" Command="{Binding CalculateCommand}" Width="100" Margin="0,10"/>
+                    <ContentControl Content="{Binding ConditionViewModel}" Margin="0,10"/>
 
-        <ItemsControl ItemsSource="{Binding Results}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Kind}" Width="100"/>
-                        <TextBlock Text="{Binding Value}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </StackPanel>
+                    <Button Content="計算" Command="{Binding CalculateCommand}" Width="100" Margin="0,10"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="計算結果">
+
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding Results}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Kind}" Width="100"/>
+                                    <TextBlock Text="{Binding Value}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button Content="保存" Command="{Binding SaveAsCommand}" Width="100" Margin="0,10"/>
+                </StackPanel>
+            </GroupBox>
+
+        </StackPanel>
+    </ScrollViewer>
 </Window>

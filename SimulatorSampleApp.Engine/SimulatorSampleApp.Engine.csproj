@@ -60,7 +60,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimulationEngine.cs" />
+    <Compile Include="Calculation\CalculationFactory.cs" />
+    <Compile Include="Calculation\ICalculationStrategy.cs" />
+    <Compile Include="Calculation\PlaneCalculationStrategy.cs" />
+    <Compile Include="Calculation\SphereCalculationStrategy.cs" />
+    <Compile Include="IO\CalculationDataPersistenceService.cs" />
+    <Compile Include="IO\IPersistenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,5 +78,6 @@
       <Name>SimulatorSampleApp.NativeBridge</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

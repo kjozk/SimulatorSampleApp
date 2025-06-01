@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using SimulatorSampleApp.UI.Services;
 using SimulatorSampleApp.UI.ViewModels;
+using SimulatorSampleApp.Engine.IO;
+using System.Windows;
 
 namespace SimulatorSampleApp.UI
 {
@@ -18,9 +14,13 @@ namespace SimulatorSampleApp.UI
         {
             base.OnStartup(e);
 
+            var fileService = new WpfFileNameService();
+
+            var calculationDataPersistenceService = new CalculationDataPersistenceService();
+
             var mainWindow = new MainWindow
             {
-                DataContext = new MainViewModel()
+                DataContext = new MainViewModel(fileService, calculationDataPersistenceService)
             };
             mainWindow.Show();
         }
