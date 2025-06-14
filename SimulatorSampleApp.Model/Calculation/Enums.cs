@@ -28,6 +28,8 @@
     {
         None,
         Meter,
+        Kilogram,
+        Second,
         Lumen,
     }
 }

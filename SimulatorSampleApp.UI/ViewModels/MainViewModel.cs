@@ -34,7 +34,41 @@ namespace SimulatorSampleApp.UI.ViewModels
         /// </summary>
         private readonly IPersistenceService<CalculationData> _persistenceService;
 
+        private readonly PlaneConditionViewModel _planeCondition = new PlaneConditionViewModel(
+            new PlaneCalculationCondition()
+            {
+                Shape = new PlaneCalculationShape()
+                {
+                    CountX = 10,
+                    CountY = 10,
+                    Width = 100,
+                    Depth = 100,
+                    Origin = new Point3D(0, 0)
+                }
+            }
+        );
+
+        private readonly SphereConditionViewModel _sphereCondition = new SphereConditionViewModel(new SphereCalculationCondition());
+
         #endregion
+
+        private bool _isIdle;
+        public bool IsIdle
+        {
+            get => _isIdle;
+            private set => SetProperty(ref _isIdle, value);
+        }
+
+        public ICommand CancelCommand { get; }
+
+        private void ExecuteCancel()
+        {
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel(); // キャンセルを要求
+                IsIdle = true;
+            }
+        }
 
         #region Properties
 
@@ -88,7 +122,7 @@ namespace SimulatorSampleApp.UI.ViewModels
         /// <summary>
         /// 保存を行うコマンド
         /// </summary>
-        public ICommand SaveAsCommand { get; }
+        public AsyncCommand SaveAsCommand { get; }
 
         #endregion
 
@@ -100,6 +134,8 @@ namespace SimulatorSampleApp.UI.ViewModels
         /// <exception cref="ArgumentNullException"></exception>
         public MainViewModel(IFileNameService fileNameService, IMessageBoxService messageBoxService, IPersistenceService<CalculationData> persistenceService)
         {
+            IsIdle = true; // 初期状態ではキャンセル可能
+
             _fileNameService = fileNameService ?? throw new ArgumentNullException(nameof(fileNameService));
             _messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
             _persistenceService = persistenceService ?? throw new ArgumentNullException(nameof(persistenceService));
@@ -107,6 +143,11 @@ namespace SimulatorSampleApp.UI.ViewModels
             SelectedShape = "Plane"; // 初期選択
             CalculateCommand = new DelegateCommand(Calculate);
             SaveAsCommand = new AsyncCommand(SaveAsAsync);
+            CancelCommand = new DelegateCommand(ExecuteCancel, () =>
+            {
+                // キャンセル可能な状態であるかどうかをチェック
+                return !IsIdle && _cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested;
+            });
             UpdateConditionViewModel();
         }
 
@@ -115,23 +156,13 @@ namespace SimulatorSampleApp.UI.ViewModels
             switch (SelectedShape)
             {
                 case "Plane":
-                    ConditionViewModel = new PlaneConditionViewModel(
-                        new PlaneCalculationCondition()
-                        {
-                            Shape = new PlaneCalculationShape()
-                            {
-                                CountX = 10,
-                                CountY = 10,
-                                Width = 100,
-                                Depth = 100,
-                                Origin = new Point3D(0, 0)
-                            }
-                        }
-                    );
+                    ConditionViewModel = _planeCondition;
                     break;
                 case "Sphere":
-                    ConditionViewModel = new SphereConditionViewModel(new SphereCalculationCondition());
+                    ConditionViewModel = _sphereCondition;
                     break;
+                default:
+                    throw new InvalidOperationException($"Unsupported shape type: {SelectedShape}");
             }
         }
 
@@ -162,8 +193,12 @@ namespace SimulatorSampleApp.UI.ViewModels
             }
         }
 
+        private CancellationTokenSource _cancellationTokenSource;
+
         private async Task SaveAsAsync(CancellationToken token)
         {
+            this.IsIdle = false;
+            _cancellationTokenSource = SaveAsCommand.CurrentCancellationTokenSource;
             try
             {
                 if (!_fileNameService.TryGetSaveFileName(
@@ -182,16 +217,37 @@ namespace SimulatorSampleApp.UI.ViewModels
                     Results = Results.ToList()
                 };
 
+                IsIdle = false; // 初期状態ではキャンセル可能
+
                 await _persistenceService.SaveDataAsync(filePath, data, token);
 
-                _messageBoxService.ShowMessage($"{filePath} にデータが保存されました。", "保存");
+                var loadData = await _persistenceService.LoadDataAsync(filePath, token);
+
+                if (data.Equals(loadData))
+                {
+                    _messageBoxService.ShowInfoMessage($"{filePath} にデータが保存されました。", "保存");
+                }
+                else
+                {
+                    throw new Exception($"{filePath} の内容が一致しません。");
+                }
 
                 Console.WriteLine($"{filePath} にデータがシリアル化されました。");
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("ファイル保存がキャンセルされました。");
             }
             catch (Exception ex)
             {
                 // エラーハンドリング（ログ出力やユーザー通知など）
                 Debug.WriteLine($"Error during save: {ex.Message}");
+                _messageBoxService.ShowErrorMessage($"ファイルの保存に失敗しました。{ex.Message}ユーザーサポートにお問い合わせください。", "保存");
+            }
+            finally
+            {
+                this.IsIdle = true;
+                _cancellationTokenSource = null; // キャンセル用トークンソースをリセット
             }
         }
     }

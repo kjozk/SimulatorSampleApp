@@ -30,6 +30,13 @@ namespace SimulatorSampleApp.Engine.IO
             }
             else
             {
+                for (int i=0; i < 500; i++)
+                {
+                    token.ThrowIfCancellationRequested(); // キャンセルが要求された場合は例外をスロー
+
+                    await Task.Delay(10, token).ConfigureAwait(false); // Simulate some delay for async operation
+                }
+
                 // XML シリアライズ
                 await Task.Run(() =>
                 {
@@ -60,6 +67,13 @@ namespace SimulatorSampleApp.Engine.IO
             }
             else
             {
+                for (int i = 0; i < 500; i++)
+                {
+                    token.ThrowIfCancellationRequested(); // キャンセルが要求された場合は例外をスロー
+
+                    await Task.Delay(10, token).ConfigureAwait(false); // Simulate some delay for async operation
+                }
+
                 await Task.Run(() =>
                 {
                     var serializer = new XmlSerializer(typeof(CalculationData));

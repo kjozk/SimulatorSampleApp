@@ -8,6 +8,29 @@ namespace SimulatorSampleApp.Engine.Calculation
 {
     public class PlaneCalculationStrategy : ICalculationStrategy
     {
+        // NativeBridge の Kind 列挙型から Model の Kind 列挙型へのマッピング
+        private static readonly Dictionary<NativeBridge.CalculationResultKind, CalculationResultKind> _resultKindMapping =
+            new Dictionary<NativeBridge.CalculationResultKind, CalculationResultKind>
+            {
+                { NativeBridge.CalculationResultKind.None, CalculationResultKind.Unknown },
+                { NativeBridge.CalculationResultKind.Average, CalculationResultKind.Average },
+                { NativeBridge.CalculationResultKind.Maximum, CalculationResultKind.Maximum },
+                { NativeBridge.CalculationResultKind.Minimum, CalculationResultKind.Minimum },
+                // 他の種類があればここに追加
+            };
+
+        // NativeBridge の Unit 列挙型から Model の Unit 列挙型へのマッピング
+        private static readonly Dictionary<NativeBridge.CalculationUnitKind, CalculationUnitKind> _unitKindMapping =
+            new Dictionary<NativeBridge.CalculationUnitKind, CalculationUnitKind>
+            {
+                { NativeBridge.CalculationUnitKind.None, CalculationUnitKind.None },
+                { NativeBridge.CalculationUnitKind.Meter, CalculationUnitKind.Meter },
+                { NativeBridge.CalculationUnitKind.Kilogram, CalculationUnitKind.Kilogram },
+                { NativeBridge.CalculationUnitKind.Second, CalculationUnitKind.Second },
+                { NativeBridge.CalculationUnitKind.Lumen, CalculationUnitKind.Lumen },
+                // 他の単位があればここに追加
+            };
+
         #region プロパティ
 
         public ICalculationCondition Condition { get => _condition; } 
@@ -18,7 +41,7 @@ namespace SimulatorSampleApp.Engine.Calculation
 
         #region フィールド
 
-        private PlaneCalculationCondition _condition;
+        private readonly PlaneCalculationCondition _condition;
 
         #endregion
 
@@ -34,7 +57,7 @@ namespace SimulatorSampleApp.Engine.Calculation
             var shape = _condition.Shape;
 
             // NativeBridge のインターフェースを呼び出して計算を実行
-            var nativeResults = NativeBridge.NativeInterface.CalculatePlane(
+            var nativeResults = NativeBridge.Calculation.CalculatePlane(
                 shape.Origin.X, shape.Origin.X, shape.Width, shape.Depth,
                 shape.CountX, shape.CountY);
 
@@ -46,24 +69,31 @@ namespace SimulatorSampleApp.Engine.Calculation
             // マッピング
             this.Results = nativeResults.Select(r =>
             {
-                CalculationResultKind calculationResultKind;
-                switch (r.Kind)
-                {
-                    case "Average":
-                        calculationResultKind = CalculationResultKind.Average;
-                        break;
-                    case "Max":
-                        calculationResultKind = CalculationResultKind.Maximum;
-                        break;
-                    case "Min":
-                        calculationResultKind = CalculationResultKind.Minimum;
-                        break;
-                    default:
-                        calculationResultKind = CalculationResultKind.Unknown;
-                        break;
-                }
-                return new CalculationResultItem(calculationResultKind, r.Value);
+                return new CalculationResultItem(ToModelResultKind(r.Kind), r.Value, ToModelUnitKind(r.Unit));
             }).ToList();
+        }
+
+
+        private static CalculationResultKind ToModelResultKind(NativeBridge.CalculationResultKind nativeKind)
+        {
+            // TryGetValue を使うことで、キーが存在しない場合のデフォルト値を指定できる
+            // または ContainsKey で存在チェック後、直接アクセスする
+            if (_resultKindMapping.TryGetValue(nativeKind, out var modelKind))
+            {
+                return modelKind;
+            }
+            // マッピングされていない場合はUnknownを返す（Model側の列挙型にUnknownが必要）
+            return CalculationResultKind.Unknown;
+        }
+
+        private static CalculationUnitKind ToModelUnitKind(NativeBridge.CalculationUnitKind nativeUnit)
+        {
+            if (_unitKindMapping.TryGetValue(nativeUnit, out var modelUnit))
+            {
+                return modelUnit;
+            }
+            // マッピングされていない場合はUnknownを返す（Model側の列挙型にUnknownが必要）
+            return CalculationUnitKind.None;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace SimulatorSampleApp.Model.Calculation
+﻿using SimulatorSampleApp.Model.Common;
+using System;
+
+namespace SimulatorSampleApp.Model.Calculation
 {
     // --------------------------------
     // 計算結果アイテムクラス
@@ -21,6 +24,22 @@
             Kind = kind;
             Value = value;
             Unit = unit;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is CalculationResultItem other)
+            {
+                return Kind == other.Kind &&
+                       FloatingPointComparer.AreEqual(Value, other.Value) &&
+                       Unit == other.Unit;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Kind, Value, Unit);
         }
     }
 }

@@ -13,6 +13,12 @@ namespace SimulatorSampleApp.MVVM
         private bool _isExecuting; // コマンドが実行中かどうかを示すフラグ
 
         /// <summary>
+        /// コマンドが現在使用している CancellationTokenSource を取得します。
+        /// コマンド実行中にのみ利用可能です。
+        /// </summary>
+        public CancellationTokenSource CurrentCancellationTokenSource => _cts;
+
+        /// <summary>
         /// コマンドが現在実行中であるかどうかを示します。
         /// </summary>
         public bool IsExecuting

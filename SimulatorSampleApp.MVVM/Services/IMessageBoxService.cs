@@ -13,7 +13,14 @@ namespace SimulatorSampleApp.MVVM.Services
         /// </summary>
         /// <param name="message"></param>
         /// <param name="title"></param>
-        void ShowMessage(string message, string title);
+        void ShowInfoMessage(string message, string title);
+
+        /// <summary>
+        /// 情報メッセージを表示します。
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="title"></param>
+        void ShowErrorMessage(string message, string title);
 
         /// <summary>
         /// 確認ダイアログを表示します。

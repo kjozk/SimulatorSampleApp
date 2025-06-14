@@ -50,9 +50,14 @@ namespace SimulatorSampleApp.UI.Services
         }
 
         // IMessageBoxService の実装
-        public void ShowMessage(string message, string title)
+        public void ShowInfoMessage(string message, string title)
         {
             MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void ShowErrorMessage(string message, string title)
+        {
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public bool ShowConfirmation(string message, string title)

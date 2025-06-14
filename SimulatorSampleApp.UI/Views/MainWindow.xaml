@@ -17,38 +17,57 @@
         </DataTemplate>
     </Window.Resources>
 
-    <ScrollViewer>
-        <StackPanel Margin="20">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <GroupBox Header="計算条件">
+        <ScrollViewer>
+            <StackPanel Margin="20" IsEnabled="{Binding IsIdle}">
 
-                <StackPanel>
-                    <ComboBox ItemsSource="{Binding ShapeTypes}"
+                <GroupBox Header="計算条件">
+
+                    <StackPanel>
+                        <ComboBox ItemsSource="{Binding ShapeTypes}"
                     SelectedItem="{Binding SelectedShape}" Width="200" />
 
-                    <ContentControl Content="{Binding ConditionViewModel}" Margin="0,10"/>
+                        <ContentControl Content="{Binding ConditionViewModel}" Margin="0,10"/>
 
-                    <Button Content="計算" Command="{Binding CalculateCommand}" Width="100" Margin="0,10"/>
-                </StackPanel>
-            </GroupBox>
+                        <Button Content="計算" Command="{Binding CalculateCommand}" Width="100" Margin="0,10"/>
+                    </StackPanel>
+                </GroupBox>
 
-            <GroupBox Header="計算結果">
+                <GroupBox Header="計算結果">
 
-                <StackPanel>
-                    <ItemsControl ItemsSource="{Binding Results}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Kind}" Width="100"/>
-                                    <TextBlock Text="{Binding Value}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <Button Content="保存" Command="{Binding SaveAsCommand}" Width="100" Margin="0,10"/>
-                </StackPanel>
-            </GroupBox>
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Results}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Kind}" Width="100"/>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Content="保存" Command="{Binding SaveAsCommand}" Width="100" Margin="0,10"/>
+                    </StackPanel>
+                </GroupBox>
 
-        </StackPanel>
-    </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ProgressBar Maximum="100" Grid.Column="0" Height="20" VerticalAlignment="Center" Margin="0,0,10,0" IsIndeterminate="True"/>
+
+            <Button Content="キャンセル" Command="{Binding CancelCommand}" Grid.Column="1" Padding="10,2"/>
+        </Grid>
+    </Grid>
 </Window>
