@@ -4,6 +4,12 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{f8fe7955-a9bf-46ab-946a-e3484aae834e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{4692c0ad-49c1-49a1-9a09-fff2509ae001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{25cf48c3-afe1-468d-af6e-b1daf7756e65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -12,12 +18,28 @@
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="include\NativeSimulatorAPI.h" />
+    <ClInclude Include="include\NativeSimulatorAPI.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ICalculationParameter.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Calculation.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CalculationEnums.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CalculationResultItem.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="source\NativeSimulatorAPI.cpp" />
+    <ClCompile Include="source\Calculation.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

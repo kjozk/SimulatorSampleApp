@@ -34,6 +34,27 @@ namespace {
         }
     }
 
+
+    /// <summary>
+	/// 計算パラメーターの実装クラスです。
+    /// </summary>
+    class CalculationParameterImpl : public NativeCore::ICalculationParameter
+    {
+    public:
+        CalculationParameterImpl() {}
+
+        std::vector<int> GetInput() override
+        {
+            // 何かそれっぽい処理
+            return std::vector<int> { 100, 200, 300, 400 };
+        }
+
+        void SetOutput(std::vector<int> output) override
+        {
+            // 何かそれっぽい処理
+        }
+    };
+
 } /* unnamed namespace */
 
 /// <summary>
@@ -49,8 +70,10 @@ namespace {
 List<NativeBridge::CalculationResultItem^>^ NativeBridge::Calculation::CalculatePlane(
     double originX, double originY, double width, double depth, int countX, int countY)
 {
+	CalculationParameterImpl param;
+
     std::vector<NativeCore::CalculationResultItem> nativeResults = NativeCore::Calculation::CalculatePlane(
-        originX, originY, width, depth, countX, countY);
+        originX, originY, width, depth, countX, countY, &param);
 
     auto managedResults = gcnew List<CalculationResultItem^>();
     for (const auto& r : nativeResults)
